@@ -1,0 +1,387 @@
+{% if template contains 'product' %}
+
+{% assign selected_variant = product.selected_or_first_available_variant %}
+
+<div class="sticky-buy-now-bar" id="StickyBuyNow">
+
+  <div class="sticky-inner">
+
+    <!-- Product Info -->
+    {% comment %} <div class="sticky-product-info">
+      <div class="sticky-image">
+        <img src="{{ product.featured_image | image_url: width: 100 }}" alt="{{ product.title }}">
+      </div>
+
+      <div class="sticky-text">
+        <div class="sticky-title">
+          {{ product.title | truncate: 40 }}
+        </div>
+
+        <div class="sticky-price" id="StickyPrice">
+          {% if selected_variant.compare_at_price > selected_variant.price %}
+            <span class="sticky-sale">
+              {{ selected_variant.price | money }}
+            </span>
+            <span class="sticky-compare">
+              {{ selected_variant.compare_at_price | money }}
+            </span>
+          {% else %}
+            {{ selected_variant.price | money }}
+          {% endif %}
+        </div>
+      </div>
+    </div> {% endcomment %}
+
+    <!-- Button -->
+    {% comment %} <div class="sticky-action">
+      {% if selected_variant.available %}
+        <button class="sticky-btn" onclick="stickyAddToCart()">
+         ADD TO CART
+        </button>
+      {% else %}
+        <button class="sticky-btn sold-out" disabled>
+          SOLD OUT
+        </button>
+      {% endif %}
+    </div> {% endcomment %}
+
+    <!-- Quantity + Button -->
+<div class="sticky-action">
+
+  <div class="sticky-qty">
+    <button type="button" class="qty-btn" onclick="changeStickyQty(-1)">−</button>
+
+    <input 
+      type="number" 
+      id="StickyQty" 
+      value="1" 
+      min="1"
+    >
+
+    <button type="button" class="qty-btn" onclick="changeStickyQty(1)">+</button>
+  </div>
+
+  {% if selected_variant.available %}
+    <button class="sticky-btn" onclick="stickyAddToCart()">
+      ADD TO CART
+    </button>
+  {% else %}
+    <button class="sticky-btn sold-out" disabled>
+      SOLD OUT
+    </button>
+  {% endif %}
+
+</div>
+
+  </div>
+</div>
+
+<style>
+.sticky-action{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.sticky-qty{
+  display:flex;
+  align-items:center;
+  border:1px solid #ddd;
+  height:50px;
+  min-width:110px;
+  background:#fff;
+}
+
+.qty-btn{
+  width:36px;
+  height:50px;
+  border:none;
+  background:none;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.sticky-qty input{
+  width:40px;
+  text-align:center;
+  border:none;
+  outline:none;
+  font-size:16px;
+  font-weight:600;
+  background:transparent;
+}
+
+.sticky-btn{
+  flex:1;
+}
+
+@media(max-width:768px){
+
+  .sticky-action{
+    flex-direction:row;
+    align-items:stretch;
+  }
+
+  .sticky-qty{
+    width:110px;
+    flex-shrink:0;
+  }
+
+}
+
+.sticky-buy-now-bar {
+  position: fixed;
+  bottom: 80px;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  padding: 10px 14px;
+  z-index: 9999;
+  transform: translateY(100%);
+  transition: transform .4s ease;
+}
+
+.sticky-buy-now-bar.show{
+  transform:translateY(0);
+}
+
+.sticky-inner{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.sticky-product-info{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.sticky-image img{
+  width:50px;
+  height:50px;
+  object-fit:cover;
+  border-radius:4px;
+}
+
+.sticky-price{
+  font-size:14px;
+  margin-top:3px;
+}
+
+.sticky-sale{
+  font-weight:600;
+}
+
+.sticky-compare{
+  margin-left:6px;
+  text-decoration:line-through;
+  color:#ff6a00;
+  font-size:12px;
+}
+
+.sticky-btn{
+  background:#c8624b;
+  color:#fff;
+  border:none;
+  padding:12px 26px;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.sticky-btn:hover{
+  opacity:0.9;
+}
+
+.sticky-btn.sold-out{
+  background:#999;
+  cursor:not-allowed;
+}
+
+@media(max-width:768px){
+
+  #shopify-section-template--27149582369056__sticky_add_cart_QPTj73{
+    width:100vw !important;
+    max-width:100vw !important;
+    margin:0 !important;
+    padding:0 !important;
+    top: 100px;
+  }
+
+  .sticky-buy-now-bar{
+    width:calc(100vw - 20px) !important;
+    max-width:calc(100vw - 20px) !important;
+    left:10px !important;
+    right:10px !important;
+    bottom:15px !important;
+    margin:0 !important;
+    border-radius:12px !important;
+  }
+
+  .sticky-inner{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    width:100%;
+    box-sizing:border-box;
+    gap:12px;
+}
+
+.sticky-product-info{
+    width:100%;
+    min-width: 10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.sticky-action{
+    width:100%;
+}
+
+.sticky-btn{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      white-space:nowrap;
+      padding:0 12px;
+      box-sizing:border-box;
+}
+
+  .sticky-image img{
+      width:48px;
+      height:48px;
+      object-fit:cover;
+      border-radius:4px;
+  }
+
+  .sticky-text{
+      min-width:0;
+  }
+
+  .sticky-title{
+    font-weight:500;
+    font-size:13px;
+    line-height:1.3;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .sticky-price{
+      font-size:13px;
+      margin-top:2px;
+  }
+
+  .sticky-btn{
+      width:100%;
+      height:50px;
+      border:none;
+      border-radius:0;
+      font-size:14px;
+      font-weight:600;
+  }
+
+  body{
+      padding-bottom:90px;
+  }
+
+}
+
+@media(min-width:769px){
+
+  .sticky-buy-now-bar{
+    display:none !important;
+  }
+
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+  const bar = document.getElementById("StickyBuyNow");
+
+  if(window.innerWidth <= 768){
+      bar.classList.add("show");
+
+      bar.style.transform = "none";
+      bar.style.opacity = "1";
+      bar.style.visibility = "visible";
+      bar.style.display = "block";
+  }
+
+});
+
+async function stickyAddToCart() {
+
+  const form = document.querySelector('form[action^="/cart/add"]');
+
+  if (!form) {
+    alert('Please select a variant');
+    return;
+  }
+
+  const formData = new FormData(form);
+
+  // quantity sync
+  const qty = document.getElementById("StickyQty").value;
+  formData.set("quantity", qty);
+
+  try {
+
+    const response = await fetch('/cart/add.js', {
+      method: 'POST',
+      body: formData
+    });
+
+    await response.json();
+
+    window.location.href = '/cart';
+
+  } catch (error) {
+
+    console.error(error);
+    alert('Something went wrong');
+
+  }
+
+}
+
+function changeStickyQty(amount){
+
+  const input = document.getElementById("StickyQty");
+
+  let current = parseInt(input.value) || 1;
+
+  current += amount;
+
+  if(current < 1){
+    current = 1;
+  }
+
+  input.value = current;
+}
+</script>
+
+
+{% endif %}
+
+{% schema %}
+{
+  "name": "Sticky Add To Cart",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Sticky Add To Cart"
+    }
+  ]
+}
+{% endschema %}
