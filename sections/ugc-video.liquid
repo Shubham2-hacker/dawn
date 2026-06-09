@@ -1,0 +1,420 @@
+{% schema %}
+{
+  "name": "UGC Video Carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Doctors Recommended"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_autoplay",
+      "label": "Enable Auto Carousel",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+        "type": "video",
+        "name": "Instagram Video",
+        "settings": [
+            {
+                "type": "text",
+                "id": "insta_url",
+                "label": "Instagram Post URL"
+            },
+            {
+                "type": "video",
+                "id": "shopify_video",
+                "label": "Upload Shopify Video"
+            },
+            {
+                "type": "product",
+                "id": "product",
+                "label": "Linked Product"
+            }
+        ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "UGC Video Carousel"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.ugc-wrapper {
+  padding: 40px 20px;
+  background: #f8f8f8;
+}
+
+.ugc-heading {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 25px;
+}
+
+/* CAROUSEL */
+.ugc-carousel-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.ugc-carousel {
+  display: flex;
+  gap: 16px;
+  width: fit-content;
+  {% if section.settings.enable_autoplay %}
+    animation: ugcMarquee 25s linear infinite;
+  {% endif %}
+}
+
+/* FIX CARD WIDTH */
+.ugc-card {
+  flex: 0 0 320px !important;
+  width: 340px !important;
+  min-width: 340px !important;
+  max-width: 340px !important;
+
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ugc-carousel:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ugcMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ugc-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+/* INSTAGRAM EMBED FIX */
+.ugc-card blockquote.instagram-media {
+  height: 320px !important;
+  max-height: 320px !important;
+  overflow: hidden !important;
+  min-height: 320px !important;
+  flex-shrink: 0;
+}
+
+/* PRODUCT INFO */
+.ugc-product {
+  padding: 10px;
+  border-top: 1px solid #eee;
+
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* TITLE */
+.ugc-product h4 {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* PRICE */
+.ugc-product p {
+  margin: 10px 0;
+}
+
+/* BUTTON */
+.ugc-product button {
+  margin-top: auto;
+  width: 100%;
+  padding: 10px;
+  background: #000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* NAVIGATION */
+.ugc-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.ugc-nav button {
+  padding: 10px 14px;
+  cursor: pointer;
+  border: 1px solid #000;
+  background: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .ugc-card {
+    flex: 0 0 calc(33.33% - 12px);
+    max-width: calc(33.33% - 12px);
+  }
+}
+
+@media (max-width: 768px) {
+  .ugc-card {
+    flex: 0 0 calc(50% - 12px);
+    max-width: calc(50% - 12px);
+  }
+}
+
+@media (max-width: 480px) {
+  .ugc-card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.ugc-local-video,
+.ugc-local-video video {
+  width: 100% !important;
+  height: 420px !important;
+  object-fit: cover !important;
+  display: block;
+}
+</style>
+
+<!-- INSTAGRAM SCRIPT -->
+<script async src="https://www.instagram.com/embed.js"></script>
+
+<div class="ugc-wrapper">
+
+  <h2 class="ugc-heading">
+    {{ section.settings.heading }}
+  </h2>
+
+  <div class="ugc-carousel-wrapper">
+
+    <div class="ugc-carousel" id="ugcCarousel">
+
+    {% for i in (1..2) %}
+    {% for block in section.blocks %}
+      {% assign product = all_products[block.settings.product] %}
+
+      <div class="ugc-card">
+
+        <!-- INSTAGRAM EMBED -->
+        {% if block.settings.shopify_video != blank %}
+
+        <!-- SHOPIFY VIDEO -->
+        {{
+            block.settings.shopify_video
+            | video_tag:
+            autoplay: true,
+            loop: true,
+            muted: true,
+            controls: false,
+            playsinline: true,
+            class: 'ugc-local-video'
+        }}
+
+        {% elsif block.settings.insta_url != blank %}
+
+        <!-- INSTAGRAM -->
+        <blockquote 
+            class="instagram-media"
+            data-instgrm-permalink="{{ block.settings.insta_url }}"
+            data-instgrm-version="14">
+        </blockquote>
+
+        {% endif %}
+
+        <!-- PRODUCT -->
+        {% if product %}
+        <div class="ugc-product">
+
+          <h4>{{ product.title }}</h4>
+
+          <p>{{ product.price | money }}</p>
+
+          <button
+            class="ugc-add-to-cart"
+            data-variant-id="{{ product.variants.first.id }}">
+            Add to Cart
+          </button>
+
+        </div>
+        {% endif %}
+
+      </div>
+
+    {% endfor %}
+    {% endfor %}
+
+  </div>
+
+  <!-- ARROWS -->
+  {% unless section.settings.enable_autoplay %}
+    <div class="ugc-nav">
+        <button onclick="scrollUGC(-1)">←</button>
+        <button onclick="scrollUGC(1)">→</button>
+    </div>
+  {% endunless %}
+
+</div>
+</div>
+
+<script>
+/* CAROUSEL SCROLL */
+function scrollUGC(direction){
+
+  const container = document.getElementById('ugcCarousel');
+  const card = container.querySelector('.ugc-card');
+
+  if (!card) return;
+
+  const gap = 16;
+  const cardWidth = card.offsetWidth + gap;
+
+  container.scrollBy({
+    left: direction * cardWidth * 4,
+    behavior: 'smooth'
+  });
+}
+
+/* ADD TO CART */
+document.addEventListener("click", function(e){
+
+  if (e.target.classList.contains("ugc-add-to-cart")) {
+
+    const button = e.target;
+    const variantId = button.getAttribute("data-variant-id");
+
+    button.innerText = "Adding...";
+    button.disabled = true;
+
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: 1
+      })
+    })
+    .then(res => res.json())
+    .then(() => {
+
+      button.innerText = "Added ✓";
+
+      /* CART COUNT UPDATE */
+      fetch('/cart.js')
+      .then(res => res.json())
+      .then(cart => {
+
+        const cartIcon = document.querySelector('#cart-icon-bubble');
+
+        if (!cartIcon) return;
+
+        let bubble = cartIcon.querySelector('.cart-count-bubble');
+
+        /* EMPTY CART CASE */
+        if (!bubble) {
+
+          bubble = document.createElement('div');
+          bubble.className = 'cart-count-bubble';
+
+          cartIcon.appendChild(bubble);
+        }
+
+        bubble.innerHTML = `
+          <span aria-hidden="true">${cart.item_count}</span>
+          <span class="visually-hidden">
+            ${cart.item_count} items
+          </span>
+        `;
+      });
+
+    })
+    .catch(err => {
+
+      button.innerText = "Error";
+      console.error(err);
+
+    })
+    .finally(() => {
+
+      setTimeout(() => {
+        button.innerText = "Add to Cart";
+        button.disabled = false;
+      }, 2000);
+
+    });
+  }
+});
+</script>
+
+<script>
+{% if section.settings.enable_autoplay %}
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  const container = document.getElementById("ugcCarousel");
+
+  if (!container) return;
+
+  let autoScroll;
+
+  function startAutoScroll() {
+
+    autoScroll = setInterval(() => {
+
+      container.scrollBy({
+        left: 320,
+        behavior: 'smooth'
+      });
+
+      /* infinite loop */
+      if (
+        container.scrollLeft + container.clientWidth >=
+        container.scrollWidth - 10
+      ) {
+        container.scrollTo({
+          left: 0,
+          behavior: 'smooth'
+        });
+      }
+
+    }, 2500);
+
+  }
+
+  startAutoScroll();
+
+  /* pause on hover */
+  container.addEventListener("mouseenter", () => {
+    clearInterval(autoScroll);
+  });
+
+  container.addEventListener("mouseleave", () => {
+    startAutoScroll();
+  });
+
+});
+
+{% endif %}
+</script>
