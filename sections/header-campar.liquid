@@ -82,11 +82,6 @@
                 <ul>
                   {% for i in (1..section.settings.marquee_loop) %}
                     <li>
-                      {% comment %}
-                        <a href="{{ section.settings.url_campar }}">
-                        	{{ section.settings.content_campar }}
-                        </a>
-                      {% endcomment %}
                       <div class="announcement-wrapper">
                         <button class="announcement-btn prev-btn">‹</button>
 
@@ -106,11 +101,6 @@
                   {%- endfor -%}
                 </ul>
               {%- else -%}
-                {% comment %}
-                  <a href="{{ section.settings.url_campar }}">
-                  	{{ section.settings.content_campar }}
-                  </a>
-                {% endcomment %}
                 <div class="announcement-wrapper">
                   <button class="announcement-btn prev-btn">‹</button>
 
@@ -317,8 +307,6 @@
     }, 4000);
   });
 </script>
-
-{% comment %} 123564 {% endcomment %}
 
 {% schema %}
 {
