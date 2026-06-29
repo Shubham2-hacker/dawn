@@ -1,0 +1,114 @@
+{% if product %}
+  <div class="product-tabs-wrapper">
+    <div class="product-tabs-nav">
+      <button class="tab-btn active" data-tab="description">
+        Description
+      </button>
+
+      {% if product.metafields.custom.ingredients != blank %}
+        <button class="tab-btn" data-tab="ingredients">
+          Ingredients
+        </button>
+      {% endif %}
+
+      {% if product.metafields.custom.shipping != blank %}
+        <button class="tab-btn" data-tab="shipping">
+          Shipping
+        </button>
+      {% endif %}
+
+      {% if product.metafields.custom.faq != blank %}
+        <button class="tab-btn" data-tab="faq">
+          FAQ
+        </button>
+      {% endif %}
+    </div>
+
+    <div class="product-tabs-content">
+      <div class="tab-content active" id="description">
+        {{ product.description }}
+      </div>
+
+      {% if product.metafields.custom.ingredients != blank %}
+        <div class="tab-content" id="ingredients">
+          {{ product.metafields.custom.ingredients | metafield_tag }}
+        </div>
+      {% endif %}
+
+      {% if product.metafields.custom.shipping != blank %}
+        <div class="tab-content" id="shipping">
+          {{ product.metafields.custom.shipping | metafield_tag }}
+        </div>
+      {% endif %}
+
+      {% if product.metafields.custom.faq != blank %}
+        <div class="tab-content" id="faq">
+          {{ product.metafields.custom.faq | metafield_tag }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+<style>
+  .product-tabs-nav {
+    display: flex;
+    gap: 15px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .product-tabs-nav .tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 0;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+  }
+
+  .product-tabs-nav .tab-btn.active {
+    border-color: #000;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const tabs = document.querySelectorAll('.tab-btn');
+  const contents = document.querySelectorAll('.tab-content');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+      const target = this.dataset.tab;
+  
+      tabs.forEach(btn => btn.classList.remove('active'));
+      contents.forEach(content => content.classList.remove('active'));
+  
+      this.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Product Tabs",
+    "settings": [],
+    "presets": [
+      {
+        "name": "Product Tabs"
+      }
+    ]
+  }
+{% endschema %}
